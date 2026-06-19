@@ -7,6 +7,7 @@ import {
   TextField, Pagination, Card, CardContent, CardActions, CardMedia, Typography, Button, Box,
   CircularProgress, Rating
 } from '@mui/material';
+import { useNavigate } from "react-router-dom";
 
 export default function ApiDataGrid() {
   //const [items, setItems] = useState([]);
@@ -16,37 +17,7 @@ export default function ApiDataGrid() {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 6;
-
-  // 1. Fetch Data on Component Mount
-  /* useEffect(() => {
-     const fetchData = async () => {
-       try {
-         setLoading(true);
-         // Replace with your real API endpoint URL (e.g., your Amazon scraper backend)
-         const response = await fetch('https://localhost:7200/api/products');
- 
-         if (!response.ok) {
-           throw new Error(`HTTP error! status: ${response.status}`);
-         }
- 
-         const data = await response.json();
-         console.log('scraped data', data);
-         setItems(data); // Save the array to state
-       } catch (err) {
-         setError(err.message);
-       } finally {
-         setLoading(false);
-       }
-     };
- 
-     fetchData();
-   }, []); // Empty array ensures this runs exactly once when the component loads
- */
-  /*useEffect(() => {
-   // 3. Trigger the GET request securely using your generic service
-   execute(() => api.get<Product[]>('/products'));
- }, [execute]);*/
-
+  const navigate = useNavigate();
 
   // 2. Handle Search Filtering
   const filteredItems = searchQuery == "" ? items : items == null ? null : items.filter((item) =>
@@ -97,6 +68,7 @@ export default function ApiDataGrid() {
 
   return (
     <Box sx={{ width: '80%', p: 3 }}>
+      <h1>Amazon Products</h1>
       <TextField
         fullWidth
         label="Search products..."
@@ -116,7 +88,9 @@ export default function ApiDataGrid() {
                   minHeight: 400,
                   display: 'flex',
                   flexDirection: 'column'
-                }}>
+                }}
+                  onClick={() => navigate(`/productDetails/${item.asin}`)}
+                >
                   <CardMedia
                     sx={{ height: 250 }}
                     image={item.image}
@@ -129,14 +103,17 @@ export default function ApiDataGrid() {
                     <Typography variant="h6" sx={{ color: 'text.secondary' }}>
                       {item.originalPrice || item.price}  {item.currency}
                     </Typography>
+                    <Typography variant="h6" sx={{ color: 'text.secondary' }}>
+                      {item.rating}
+                    </Typography>
+
+                    <Typography variant="h6" sx={{ color: 'text.secondary' }}>
+                      Total Reviews : {item.totalReviews}
+                    </Typography>
                   </CardContent>
 
-                  <Typography component="legend">
-                    <Rating name="read-only" value={Number(item.rating)} readOnly />
-                  </Typography>
-
                   <CardActions sx={{ marginTop: 'auto', marginLeft: 'auto' }}>
-                    <Button size="small">Show More</Button>
+                    <Button size="small" onClick={() => navigate(`/productDetails/${item.asin}`)}>Show More</Button>
                   </CardActions>
                 </Card>
 
